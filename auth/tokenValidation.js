@@ -1,4 +1,5 @@
 const { verify } = require("jsonwebtoken");
+require("dotenv").config();
 
 module.exports = {
   checkToken: (req, res, next) => {
@@ -6,7 +7,7 @@ module.exports = {
 
     if (token) {
       token = token.slice(7);
-      verify(token, "qwe1234", (err, decoded) => {
+      verify(token, process.env.JWTSECRET, (err, decoded) => {
         if (err) {
           res.json({
             message: "invalid Token",

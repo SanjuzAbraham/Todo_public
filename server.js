@@ -4,7 +4,9 @@ const bodyParser = require("body-parser");
 const { urlencoded } = require("express");
 const passport = require("passport");
 const cookieSession = require("cookie-session");
+
 require("./passport-setup");
+require("dotenv").config()
 
 const app = express();
 
@@ -40,7 +42,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Landing Page" });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);

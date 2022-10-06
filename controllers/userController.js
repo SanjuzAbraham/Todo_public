@@ -2,6 +2,8 @@ const db = require("../models");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 
+require("dotenv").config();
+
 const User = db.users;
 
 const addUser = async (req, res) => {
@@ -13,6 +15,7 @@ const addUser = async (req, res) => {
     email: req.body.email,
     password: req.body.password,
   };
+
   const alreadyExistUser = await User.findOne({
     where: { email: req.body.email },
   }).catch((err) => {
@@ -20,7 +23,9 @@ const addUser = async (req, res) => {
   });
 
   if (alreadyExistUser && alreadyExistUser.flag === "email") {
-    return res.json({ message: "User with email already exists " });
+    return res.json({
+      message: "User with email already exists ",
+    });
   }
 
   if (alreadyExistUser && alreadyExistUser.flag === "google") {
@@ -46,12 +51,17 @@ const getUser = async (req, res) => {
       email: req.body.email,
     },
   });
+
   if (!user) {
-    return res.json({ message: "user with this email doesn't exist" });
+    return res.json({
+      message: "user with this email doesn't exist",
+    });
   }
+
   if (req.body.password) {
     User.update({ flag: "email" }, { where: { email: req.body.email } });
   }
+
   if (user.flag === "email") {
     const result = compareSync(req.body.password, user.password);
     if (!result) {
@@ -60,9 +70,11 @@ const getUser = async (req, res) => {
       });
     }
   }
-  const jsontoken = sign({ result: user }, "qwe1234", {
+
+  const jsontoken = sign({ result: user }, process.env.JWTSECRET, {
     expiresIn: "1h",
   });
+
   return res.json({
     message: "Login Successful",
     token: jsontoken,

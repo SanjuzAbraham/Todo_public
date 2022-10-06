@@ -43,6 +43,7 @@ const updateListById = async (req, res) => {
     },
   });
   res.status(200).send(list);
+  console.log("Updated");
   console.log(list);
 };
 
